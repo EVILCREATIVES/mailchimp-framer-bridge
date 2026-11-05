@@ -10,13 +10,14 @@ const REQUIRED = ["FRAMER_PROJECT_URL", "FRAMER_API_KEY", "FRAMER_COLLECTION_ID"
 
 export async function buildItem(campaign) {
   const { cleanBody, extractHeroImage, excerpt, slugify } = await import("../lib/clean.js")
-  const html = cleanBody(campaign.html)
+  const imageUrl = extractHeroImage(campaign.html)
+  const html = cleanBody(campaign.html, { heroSrc: imageUrl })
   return {
     // stable slug keyed on the campaign so re-runs update instead of duplicating
     slug: `${slugify(campaign.subject || campaign.title)}-${campaign.webId || campaign.id}`.slice(0, 96),
     title: campaign.subject || campaign.title,
     summary: campaign.previewText || excerpt(campaign.plainText, campaign.html),
-    imageUrl: extractHeroImage(campaign.html),
+    imageUrl,
     html,
     link: campaign.archiveUrl,
     date: new Date(campaign.sendTime).toISOString(),
@@ -25,6 +26,12 @@ export async function buildItem(campaign) {
 
 export default async function handler(req, res) {
   const missing = REQUIRED.filter((k) => !process.env[k])
+
+  // CORS, so the endpoint can be re-triggered from a browser (manual re-import).
+  res.setHeader("Access-Control-Allow-Origin", "*")
+  res.setHeader("Access-Control-Allow-Headers", "content-type, x-bridge-secret")
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS")
+  if (req.method === "OPTIONS") return res.status(204).end()
 
   if (req.method !== "POST") {
     // Health check. Loads each dependency so problems show up here, not in Zapier.
