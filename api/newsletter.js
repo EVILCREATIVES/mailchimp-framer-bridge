@@ -29,7 +29,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     // Health check. Loads each dependency so problems show up here, not in Zapier.
     const deps = {}
-    for (const name of ["sanitize-html", "framer-api"]) {
+    for (const name of ["framer-api"]) {
       try {
         await import(name)
         deps[name] = "ok"

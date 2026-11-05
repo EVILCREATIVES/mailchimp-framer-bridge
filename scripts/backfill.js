@@ -11,7 +11,7 @@ console.log(`Found ${ids.length} sent campaigns`)
 for (const id of ids.reverse()) {
   // oldest first so the collection order reads chronologically
   const campaign = await fetchCampaign(id, process.env.MAILCHIMP_API_KEY)
-  const item = buildItem(campaign)
+  const item = await buildItem(campaign)
   const r = await upsertNewsletter({ ...process.env, AUTO_PUBLISH: "false" }, item)
   console.log(`${r.action.padEnd(8)} ${item.date.slice(0, 10)}  ${item.title}`)
 }

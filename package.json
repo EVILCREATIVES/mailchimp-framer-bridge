@@ -10,8 +10,7 @@
     "backfill": "node scripts/backfill.js"
   },
   "dependencies": {
-    "framer-api": "^5.1.0",
-    "sanitize-html": "^2.13.0"
+    "framer-api": "^5.1.0"
   },
   "engines": {
     "node": "22.x"
