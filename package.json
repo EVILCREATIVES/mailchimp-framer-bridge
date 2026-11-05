@@ -1,0 +1,19 @@
+{
+  "name": "mailchimp-framer-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Zapier → Mailchimp campaign → Framer CMS (Newsletter collection) bridge",
+  "scripts": {
+    "dev": "vercel dev",
+    "test:clean": "node test/clean.test.js",
+    "backfill": "node scripts/backfill.js"
+  },
+  "dependencies": {
+    "framer-api": "^5.1.0",
+    "sanitize-html": "^2.13.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
