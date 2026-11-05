@@ -43,9 +43,10 @@ const classic = `<!doctype html><html><head><title>x</title><style>.mcnTextConte
 // --- New builder (mceImage etc.), mirrors the real CC campaign ---------------
 const pad = "͏ ‌      ".repeat(200)
 const modern = `<html><body>
-<div style="display:none"><p>${pad}</p></div>
-<div class="imageDropZone mceImage"><img src="https://mcusercontent.com/a/images/logo-hash.png" width="533.8" height="auto"></div>
-<p> </p>
+<span class="mcnPreviewText" style="display:none; font-size:0px;">Bring more focus.</span>
+<div style="display: none; max-height: 0px; overflow: hidden;">${pad}</div>
+<table><tr><td class="imageDropZone mceImage"><img src="https://mcusercontent.com/a/images/logo-hash.png" width="533.8" height="auto"></td></tr></table>
+<div>  </div>
 <div class="imageDropZone mceImage"><img src="https://mcusercontent.com/a/images/hero-hash.png" width="608" height="auto"></div>
 <p>Bring more focus to your next round of field testing</p>
 <h1>Stuff you should know</h1>
@@ -53,7 +54,8 @@ const modern = `<html><body>
 <div class="imageDropZone mceImage"><a href="https://ccexplorations.com/case"><img src="https://mcusercontent.com/a/images/photo-1.png" width="306" height="auto"></a></div>
 <h4>Putting AMRT to the test</h4>
 <p><a href="https://ccexplorations.com/case">Read the case study →</a></p>
-<p><a href="https://ccexplorations.com/case">View</a></p>
+<table><tr><td><a href="https://ccexplorations.com/case" style="display:block;border-radius:50px" data-button-link-id="59">View</a></td></tr></table>
+<td>Loose text in a cell with <strong>bold</strong> inside.</td>
 <p>Best regards,<br>John Casey</p>
 <p><a href="https://mailchi.mp/x">View email in browser</a><br>*|IFNOT:ARCHIVE_PAGE|**|LIST:ADDRESSLINE|**|END:IF|*<br><a href="https://x.list-manage.com/profile">update your preferences</a> or <a href="https://x.list-manage.com/unsubscribe">unsubscribe</a></p>
 <img src="https://x.list-manage.com/track/open.php?u=1" width="1" height="1">
@@ -71,6 +73,9 @@ const modern = `<html><body>
   assert.ok(!/ARCHIVE_PAGE|update your preferences|unsubscribe|View email in browser/i.test(html), "footer removed")
   assert.ok(/Read the case study/.test(html), "real links kept")
   assert.ok(/Best regards,<br>John Casey/.test(html), "sign-off kept")
+  assert.ok(/<p>Loose text in a cell with <strong>bold<\/strong> inside\.<\/p>/.test(html), "loose cell text wrapped in <p>")
+  assert.ok(!/<p>\s*<\/p>/.test(html), "no empty paragraphs")
+  assert.ok(!/<p>\s*<\/p>|<p><\/p>/.test(html), "no empty paragraphs from hidden/blank divs")
   assert.ok(html.startsWith("<p>Bring more focus"), `body starts with real content, got: ${html.slice(0, 60)}`)
 }
 

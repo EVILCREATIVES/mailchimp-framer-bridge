@@ -9,10 +9,15 @@
 const REQUIRED = ["FRAMER_PROJECT_URL", "FRAMER_API_KEY", "FRAMER_COLLECTION_ID", "MAILCHIMP_API_KEY", "BRIDGE_SECRET"]
 
 export async function buildItem(campaign) {
-  const { cleanBody, extractHeroImage, excerpt, slugify } = await import("../lib/clean.js")
+  const { cleanBody, embedHtml, extractHeroImage, excerpt, slugify } = await import("../lib/clean.js")
   const imageUrl = extractHeroImage(campaign.html)
-  const html = cleanBody(campaign.html, { heroSrc: imageUrl })
+  // EMBED_EMAIL=true (default): the email renders as-is in an iframe; Content stays empty.
+  // EMBED_EMAIL=false: converted to clean rich text in Content instead.
+  const embed = String(process.env.EMBED_EMAIL ?? "true").toLowerCase() !== "false"
+  const html = embed ? "" : cleanBody(campaign.html, { heroSrc: imageUrl })
+  const emailHtml = embed ? embedHtml(campaign.html) : ""
   return {
+    emailHtml,
     // stable slug keyed on the campaign so re-runs update instead of duplicating
     slug: `${slugify(campaign.subject || campaign.title)}-${campaign.webId || campaign.id}`.slice(0, 96),
     title: campaign.subject || campaign.title,
